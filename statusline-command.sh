@@ -5,8 +5,8 @@
 #   Plus:  ccsl-style 5h window (elapsed/5h + reset clock), plain-text icon mode,
 #          upstream update notice, Windows (Git Bash) compatibility fixes.
 #
-# Line 1: Model │ ctx ★★★★☆☆☆☆☆☆ 42% │ Cost   │ 5h ★★★★☆☆☆☆☆☆  40% elapsed/5h reset HH:MM
-# Line 2: Directory │ Git Branch & Status │ Venv │ Vim │ session │ 7d ★☆☆☆☆☆☆☆☆☆   8%     reset M/D HH:MM   (usage column aligned, tails right-aligned)
+# Line 1: Model │ ctx ★ ★ ★ ★ ☆ ☆ ☆ ☆ ☆ ☆ 42% │ Cost   │ 5h ★ ★ ★ ★ ☆ ☆ ☆ ☆ ☆ ☆  40% elapsed/5h reset HH:MM
+# Line 2: Directory │ Git Branch & Status │ Venv │ Vim │ session │ 7d ★ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆   8%     reset M/D HH:MM   (usage column aligned, tails right-aligned)
 
 input=$(cat)
 now=$(date +%s)
@@ -145,17 +145,19 @@ pct_int=${used_pct%.*}
 pct_int=${pct_int:-0}
 CTX_COLOR=$(pct_color "$pct_int")
 
-# --- Star gauge: ★★★★☆☆☆☆☆☆ (STAR_SEGMENTS stars, rounded to nearest) ---
+# --- Star gauge: ★ ★ ★ ★ ☆ ☆ ☆ ☆ ☆ ☆ (STAR_SEGMENTS stars, rounded to nearest) ---
 # Used for the context bar and the 5h / 7d usage gauges.
 STAR_SEGMENTS=10
+# Spacing inserted between stars (set to "" for a tight gauge).
+STAR_GAP=" "
 star_gauge() {
-    local pct=$1 filled empty g="" i
+    local pct=$1 filled empty g="" i sep=""
     filled=$(( (pct * STAR_SEGMENTS + 50) / 100 ))
     [ "$filled" -gt "$STAR_SEGMENTS" ] && filled=$STAR_SEGMENTS
     [ "$filled" -lt 0 ] && filled=0
     empty=$((STAR_SEGMENTS - filled))
-    for ((i = 0; i < filled; i++)); do g="${g}★"; done
-    for ((i = 0; i < empty; i++)); do g="${g}☆"; done
+    for ((i = 0; i < filled; i++)); do g="${g}${sep}★"; sep=$STAR_GAP; done
+    for ((i = 0; i < empty; i++)); do g="${g}${sep}☆"; sep=$STAR_GAP; done
     echo "$g"
 }
 
@@ -261,11 +263,11 @@ fmt_hm() {
     echo "$((s / 3600))h$((s % 3600 / 60))m"
 }
 
-# Star gauge: ★★★★☆☆☆☆☆☆ (STAR_SEGMENTS stars, rounded to nearest)
-# Usage segments are built as head ("5h ★★★☆☆☆☆☆☆☆  16%") + tail ("0h19m/5h reset 02:50").
+# Star gauge: ★ ★ ★ ★ ☆ ☆ ☆ ☆ ☆ ☆ (STAR_SEGMENTS stars, rounded to nearest)
+# Usage segments are built as head ("5h ★ ★ ★ ☆ ☆ ☆ ☆ ☆ ☆ ☆  16%") + tail ("0h19m/5h reset 02:50").
 # The tails are later padded to equal width so the two lines end at the same column.
 
-# 5h window, ccsl style:  5h ★★★☆☆☆☆☆☆☆  16% 0h19m/5h reset 02:50
+# 5h window, ccsl style:  5h ★ ★ ★ ☆ ☆ ☆ ☆ ☆ ☆ ☆  16% 0h19m/5h reset 02:50
 # Sets head_5h / tail_5h.
 seg_5h() {
     local pct=$1 reset=$2 show_clock=$3 color
@@ -282,7 +284,7 @@ seg_5h() {
     fi
 }
 
-# 7d window:  7d ★★☆☆☆☆☆☆☆☆  24% reset 9/3 15:00
+# 7d window:  7d ★ ★ ☆ ☆ ☆ ☆ ☆ ☆ ☆ ☆  24% reset 9/3 15:00
 # Sets head_7d / tail_7d.
 seg_7d() {
     local pct=$1 reset=$2 color
