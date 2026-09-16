@@ -387,7 +387,7 @@ line1_tail="${SEP}${cost_seg}"
 if [ "$pct_int" -ge 90 ]; then
     line1="${BG_RED}${WHITE_BOLD} ${ICON_WARN} CTX ${pct_int}% ${RST} ${quota_badge}${CYAN}${BOLD}${ICON_MODEL} ${model}${RST}${SEP}${CTX_COLOR}${bar}${RST}${line1_tail}"
 else
-    line1="${quota_badge}${CYAN}${BOLD}${ICON_MODEL} ${model}${RST}${SEP}${DIM}${ICON_CTX}${RST} ${CTX_COLOR}${bar} ${pct_int}%${RST}${line1_tail}"
+    line1="${quota_badge}${CYAN}${BOLD}${ICON_MODEL} ${model}${RST}${SEP}${DIM}${ICON_CTX}${RST} ${CTX_COLOR}${bar} $(printf "%3d" "$pct_int")%${RST}${line1_tail}"
 fi
 
 line2="${BLUE}${ICON_DIR} ${dir_name}${RST}${git_info}${venv_str}${vim_str}${session_str}${upd_str}"
